@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
+let AirObstacle, Bird, Cloud
+let modelsLoading = true;
 class BasicCharacterControllerInput {
   constructor(characterController) {
     this._characterController = characterController;
@@ -82,7 +84,7 @@ class GameDemo {
     this._input = new BasicCharacterControllerInput(this);
   }
 
-  _Initialize() {
+  async _Initialize() {
     this._threejs = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -125,29 +127,59 @@ class GameDemo {
     light.shadow.camera.bottom = -100;
     this._scene.add(light);
 
+    await this._LoadModels();
+
     light = new THREE.AmbientLight(0x101010);
     this._scene.add(light);
-
+    this._LoadPlane();
     //loading models
-    this._LoadModel();
+    
 
     this._RAF();
+
+    this._addModel(Cloud, 18,18,-18)
+
+    this._addModel(AirObstacle, -18,18,-18)
   }
 
-  _LoadModel() {
-    try {
-      const loader = new GLTFLoader();
+  _LoadPlane() {
+    const loader = new GLTFLoader();
       loader.load('./resources/models/plane10x.glb', (gltf) => {
         gltf.scene.traverse(c => {
           c.castShadow = true;
         });
+        
         this.player = gltf.scene.children[0];
         this.player.position.set(0, 0, 0);
         this.player.rotateY(Math.PI / 2);
         this._scene.add(gltf.scene);
       });
+  }
+
+  async _LoadModels() {
+    try {
+      const loader = new GLTFLoader();
+
+      const loadCloud = () => new Promise(resolve => loader.load('./resources/models/cloud.glb', resolve));
+      const loadAirObstacle = () => new Promise(resolve => loader.load('./resources/models/Airplane-obstacle.glb', resolve));
+
+      const [cloudResult, airObstacleResult] = await Promise.all([loadCloud(), loadAirObstacle()]);
+
+      Cloud = cloudResult.scene;
+      AirObstacle = airObstacleResult.scene;
     } catch (error) {
-      console.error('Error loading the model:', error);
+      console.error('Error loading models:', error);
+    } finally {
+      modelsLoading = false;
+    }
+  }
+
+  _addModel(model, x, y, z) {
+    if (!modelsLoading) {
+      if (model) {
+        model.position.set(x, y, z);
+        this._scene.add(model);  // Use this._scene instead of scene
+      }
     }
   }
 
