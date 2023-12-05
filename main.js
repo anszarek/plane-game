@@ -12,11 +12,11 @@ const generateObjectPos = (dim, usedPositions) => {
   let grid = []
   for (let i in arr) {
     for (let j in arr) {
-        grid.push([arr[i],arr[j]]);
+      grid.push([arr[i], arr[j]]);
     }
-}
-let avaliable;
-  if(usedPositions) {
+  }
+  let avaliable;
+  if (usedPositions) {
     avaliable = grid.filter(n => !usedPositions.some(([x, y]) => x === n[0] && y === n[1]))
   } else {
     avaliable = grid
@@ -160,12 +160,12 @@ class GameDemo {
     this._RAF();
 
     this._addModel(Cloud.clone(), 18, 18, -18)
-    let [x,y] = generateObjectPos(dim);
+    let [x, y] = generateObjectPos(dim);
     this._addModel(Cloud.clone(), x, y, -18)
   }
   // generic solution
   // _generateObstacle () {
-    
+
   //   const lastZ = allObjects[allObjects.length - 1].position.z ?? -18
   //   if(lastZ > -10) {
   //     const obst = Math.floor(Math.random() * 3);
@@ -176,7 +176,7 @@ class GameDemo {
   //       this._addModel(Cloud.clone(), x, y, -18)
   //     }
   //   }
-    
+
   // }
 
 
@@ -210,19 +210,19 @@ class GameDemo {
     if (lastZ > -10) {
       const pathWidth = 6; // Adjust the width of the clear path
       const pathPosition = Math.floor(Math.random() * 3); // Adjust the position of the clear path
-  
+
       const obst = Math.floor(Math.random() * 5);
       let usedPositions = [];
       for (let i = 0; i < obst; ++i) {
         let [x, y] = generateObjectPos(dim, usedPositions);
-  
+
         // Check if the current position is within the clear path
         if (pathPosition === 0 && x !== -pathWidth && x !== pathWidth) {
           x = x < 0 ? x - pathWidth : x + pathWidth;
         } else if (pathPosition === 1 && y !== -pathWidth && y !== pathWidth) {
           y = y < 0 ? y - pathWidth : y + pathWidth;
         }
-  
+
         usedPositions.push([x, y]);
         this._addModel(Cloud.clone(), x, y, -18);
       }
@@ -234,26 +234,32 @@ class GameDemo {
 
     positions.forEach((slice, i) => {
       slice.forEach(object => {
-        this._addModel(Cloud.clone(), object[0], object[1], -i*18 - 18 + lastZ)
+        this._addModel(Cloud.clone(), object[0], object[1], -i * 18 - 18 + lastZ)
       })
     })
-
   }
 
+
+
+
   _chooseChunks = () => {
-    const chunkA = [[[-dim, dim], [0, dim], [dim,0], [0,-dim]], [[-dim,dim], [0,0]], [[-dim,-dim], [0,0], [dim,dim], [dim,0], [dim,-dim]]];
-    const chunkB = [[[-dim, dim], [-dim,0], [-dim,-dim], [dim,0]],  [[-dim,dim], [dim,dim], [dim,-dim]], [[-dim,-dim], [0,dim], [dim,dim], [dim,-dim]]];
-    const chunkC = [[[0,0], [0,-dim], [dim,dim], [dim,0]], [[-dim,0], [dim,0]], [[-dim,-dim], [-dim,0], [-dim,dim], [dim,dim], [dim,0], [dim,-dim]]];
-    const chunkD = [[[-dim,dim], [0,dim], [dim,dim], [dim,-dim]], [[-dim,dim], [-dim,0], [-dim,-dim], [0,dim], [dim,dim], [dim,0], [dim,-dim]], [[-dim,-dim], [0,dim], [0,-dim]]];
-    const chunkE = [[[-dim,dim], [dim,dim], [dim,-dim]], [[0,dim], [0,0], [0,-dim]], [[-dim,dim], [-dim,-dim], [dim,dim]]];
+    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
+    if (lastZ < -50) {
+      return
+    }
+    const chunkA = [[[-dim, dim], [0, dim], [dim, 0], [0, -dim]], [[-dim, dim], [0, 0]], [[-dim, -dim], [0, 0], [dim, dim], [dim, 0], [dim, -dim]]];
+    const chunkB = [[[-dim, dim], [-dim, 0], [-dim, -dim], [dim, 0]], [[-dim, dim], [dim, dim], [dim, -dim]], [[-dim, -dim], [0, dim], [dim, dim], [dim, -dim]]];
+    const chunkC = [[[0, 0], [0, -dim], [dim, dim], [dim, 0]], [[-dim, 0], [dim, 0]], [[-dim, -dim], [-dim, 0], [-dim, dim], [dim, dim], [dim, 0], [dim, -dim]]];
+    const chunkD = [[[-dim, dim], [0, dim], [dim, dim], [dim, -dim]], [[-dim, dim], [-dim, 0], [-dim, -dim], [0, dim], [dim, dim], [dim, 0], [dim, -dim]], [[-dim, -dim], [0, dim], [0, -dim]]];
+    const chunkE = [[[-dim, dim], [dim, dim], [dim, -dim]], [[0, dim], [0, 0], [0, -dim]], [[-dim, dim], [-dim, -dim], [dim, dim]]];
     console.log(lastChunk)
     let chunk = lastChunk.pop()
-    
-    if(chunk === 'first') {
+
+    if (chunk === 'first') {
       const avaliableChunk = [this._generateChunks(chunkC), this._generateChunks(chunkD), this._generateChunks(chunkE)];
       const chosen = Math.floor(Math.random() * avaliableChunk.length)
       avaliableChunk[chosen];
-      switch(chosen) {
+      switch (chosen) {
         case 0:
           lastChunk.push('third');
           break;
@@ -263,15 +269,15 @@ class GameDemo {
         case 2:
           lastChunk.push('fifth');
           break;
-        
+
       }
       return;
     }
-    if(chunk === 'second') {
+    if (chunk === 'second') {
       const avaliableChunk = [this._generateChunks(chunkA), this._generateChunks(chunkE)];
       const chosen = Math.floor(Math.random() * avaliableChunk.length)
       avaliableChunk[chosen];
-      switch(chosen) {
+      switch (chosen) {
         case 0:
           lastChunk.push('first');
           break;
@@ -281,11 +287,11 @@ class GameDemo {
       }
       return;
     }
-    if(chunk === 'third') {
+    if (chunk === 'third') {
       const avaliableChunk = [this._generateChunks(chunkA), this._generateChunks(chunkC), this._generateChunks(chunkE)];
       const chosen = Math.floor(Math.random() * avaliableChunk.length)
       avaliableChunk[chosen];
-      switch(chosen) {
+      switch (chosen) {
         case 0:
           lastChunk.push('first');
           break;
@@ -298,11 +304,11 @@ class GameDemo {
       }
       return;
     }
-    if(chunk === 'fourth') {
+    if (chunk === 'fourth') {
       const avaliableChunk = [this._generateChunks(chunkA), this._generateChunks(chunkE)];
       const chosen = Math.floor(Math.random() * avaliableChunk.length)
       avaliableChunk[chosen];
-      switch(chosen) {
+      switch (chosen) {
         case 0:
           lastChunk.push('first');
           break;
@@ -312,11 +318,11 @@ class GameDemo {
       }
       return;
     }
-    if(chunk === 'fifth') {
+    if (chunk === 'fifth') {
       const avaliableChunk = [this._generateChunks(chunkB), this._generateChunks(chunkC), this._generateChunks(chunkD)];
       const chosen = Math.floor(Math.random() * avaliableChunk.length)
       avaliableChunk[chosen];
-      switch(chosen) {
+      switch (chosen) {
         case 0:
           lastChunk.push('second');
           break;
@@ -341,7 +347,7 @@ class GameDemo {
 
       this.player = gltf.scene.children[0];
       this.player.position.set(0, 0, 0);
-      this.player.scale.set(0.7,0.7,0.7);
+      this.player.scale.set(0.7, 0.7, 0.7);
       this.player.rotateY(Math.PI / 2);
       this._scene.add(gltf.scene);
     });
@@ -385,23 +391,23 @@ class GameDemo {
     let airObjects = [Cloud, AirObstacle]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...airObjects, ...allObjects];
-  
+
     airObjects.forEach((object) => {
       if (object) {
         object.position.z += speed;
-  
+
         // Add movement logic for clones here
         if (object.userData && object.userData.isClone) {
           const cloneSpeed = 0.05; // Adjust the speed of clone movement
           object.position.x += cloneSpeed;
-  
+
           // Reset clone position when it reaches a certain point
           if (object.position.x > dim) {
             object.position.x = -dim;
             object.position.y = generateObjectPos(dim)[1];
           }
         }
-  
+
         // Check if the object's z position is greater than 0 and make it invisible
         //camera is on z = 70, player x = 0
         if (object.position.z > 50 && !object.userData.crossedThreshold) {
