@@ -384,7 +384,8 @@ class GameDemo {
   _RAFAirObjects() {
     let airObjects = [Cloud, AirObstacle]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
-    airObjects = [...airObjects, ...allObjects]
+    airObjects = [...airObjects, ...allObjects];
+  
     airObjects.forEach((object) => {
       if (object) {
         object.position.z += speed;
@@ -399,6 +400,16 @@ class GameDemo {
             object.position.x = -dim;
             object.position.y = generateObjectPos(dim)[1];
           }
+        }
+  
+        // Check if the object's z position is greater than 0 and make it invisible
+        //camera is on z = 70, player x = 0
+        if (object.position.z > 50 && !object.userData.crossedThreshold) {
+          object.visible = false;
+          object.userData.crossedThreshold = true;
+        } else if (object.position.z <= 0) {
+          object.visible = true;
+          object.userData.crossedThreshold = false;
         }
       }
     });
