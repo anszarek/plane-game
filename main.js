@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
 let AirObstacle, Bird, Cloud;
-const dim = 18;
+const dim = 6;
 
 let allObjects = []
 
@@ -153,7 +153,7 @@ class GameDemo {
 
     light = new THREE.AmbientLight(0x101010);
     this._scene.add(light);
-    // this._LoadPlane();
+    this._LoadPlane();
     //loading models
 
 
@@ -163,20 +163,44 @@ class GameDemo {
     let [x,y] = generateObjectPos(dim);
     this._addModel(Cloud.clone(), x, y, -18)
   }
-
-  _generateObstacle () {
+  // generic solution
+  // _generateObstacle () {
     
-    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18
-    if(lastZ > -10) {
-      const obst = Math.floor(Math.random() * 3);
+  //   const lastZ = allObjects[allObjects.length - 1].position.z ?? -18
+  //   if(lastZ > -10) {
+  //     const obst = Math.floor(Math.random() * 3);
+  //     let usedPositions = [];
+  //     for(let i = 0; i < obst; ++i ) {
+  //       let [x,y] = generateObjectPos(dim, usedPositions);
+  //       usedPositions.push([x,y]);
+  //       this._addModel(Cloud.clone(), x, y, -18)
+  //     }
+  //   }
+    
+  // }
+
+  _generateObstacle() {
+    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
+    if (lastZ > -10) {
+      const pathWidth = 6; // Adjust the width of the clear path
+      const pathPosition = Math.floor(Math.random() * 3); // Adjust the position of the clear path
+
+      const obst = Math.floor(Math.random() * 5);
       let usedPositions = [];
-      for(let i = 0; i < obst; ++i ) {
-        let [x,y] = generateObjectPos(dim, usedPositions);
-        usedPositions.push([x,y]);
-        this._addModel(Cloud.clone(), x, y, -18)
+      for (let i = 0; i < obst; ++i) {
+        let [x, y] = generateObjectPos(dim, usedPositions);
+
+        // Check if the current position is within the clear path
+        if (pathPosition === 0 && x !== -pathWidth && x !== pathWidth) {
+          x = x < 0 ? x - pathWidth : x + pathWidth;
+        } else if (pathPosition === 1 && y !== -pathWidth && y !== pathWidth) {
+          y = y < 0 ? y - pathWidth : y + pathWidth;
+        }
+
+        usedPositions.push([x, y]);
+        this._addModel(Cloud.clone(), x, y, -18);
       }
     }
-    
   }
 
   _LoadPlane() {
@@ -188,6 +212,7 @@ class GameDemo {
 
       this.player = gltf.scene.children[0];
       this.player.position.set(0, 0, 0);
+      this.player.scale.set(0.7,0.7,0.7);
       this.player.rotateY(Math.PI / 2);
       this._scene.add(gltf.scene);
     });
