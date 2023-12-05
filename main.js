@@ -135,7 +135,7 @@ class GameDemo {
 
     //lights
     let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-    light.position.set(20, 100, 10);
+    light.position.set(0, 20, 70);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
     light.shadow.bias = -0.001;
@@ -363,6 +363,12 @@ class GameDemo {
       const [cloudResult, airObstacleResult] = await Promise.all([loadCloud(), loadAirObstacle()]);
 
       Cloud = cloudResult.scene;
+      Cloud.traverse((child) => {
+        if (child.isMesh) {
+            child.material.opacity = 0.4;
+            child.material.transparent = true;
+        }
+    });
       AirObstacle = airObstacleResult.scene;
     } catch (error) {
       console.error('Error loading models:', error);
