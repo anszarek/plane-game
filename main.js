@@ -2,12 +2,34 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
-let AirObstacle, Bird, Cloud
+let AirObstacle, Bird, Cloud;
+const dim = 18;
+
+let allObjects = []
+
+const generateObjectPos = (dim, usedPositions) => {
+  const arr = [-dim, 0, dim];
+  let grid = []
+  for (let i in arr) {
+    for (let j in arr) {
+        grid.push([arr[i],arr[j]]);
+    }
+}
+let avaliable;
+  if(usedPositions) {
+    avaliable = grid.filter(n => !usedPositions.some(([x, y]) => x === n[0] && y === n[1]))
+  } else {
+    avaliable = grid
+  }
+  const gridIdx = Math.floor(Math.random() * avaliable.length)
+  return avaliable[gridIdx];
+};
+
 let modelsLoading = true;
 class BasicCharacterControllerInput {
   constructor(characterController) {
     this._characterController = characterController;
-    this._Init();    
+    this._Init();
   }
 
   _Init() {
@@ -22,7 +44,7 @@ class BasicCharacterControllerInput {
   }
 
   _onKeyDown(event) {
-    if (event.repeat) return; 
+    if (event.repeat) return;
     switch (event.keyCode) {
       case 87: // w
         if (!this._keys.up) {
@@ -52,7 +74,7 @@ class BasicCharacterControllerInput {
   }
 
   _onKeyUp(event) {
-    switch(event.keyCode) {
+    switch (event.keyCode) {
       case 87: // w
         this._keys.up = false;
         break;
@@ -131,29 +153,44 @@ class GameDemo {
 
     light = new THREE.AmbientLight(0x101010);
     this._scene.add(light);
-    this._LoadPlane();
+    // this._LoadPlane();
     //loading models
-    
+
 
     this._RAF();
 
-    this._addModel(Cloud, 18,18,-18)
+    this._addModel(Cloud.clone(), 18, 18, -18)
+    let [x,y] = generateObjectPos(dim);
+    this._addModel(Cloud.clone(), x, y, -18)
+  }
 
-    this._addModel(AirObstacle, -18,18,-18)
+  _generateObstacle () {
+    
+    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18
+    if(lastZ > -10) {
+      const obst = Math.floor(Math.random() * 3);
+      let usedPositions = [];
+      for(let i = 0; i < obst; ++i ) {
+        let [x,y] = generateObjectPos(dim, usedPositions);
+        usedPositions.push([x,y]);
+        this._addModel(Cloud.clone(), x, y, -18)
+      }
+    }
+    
   }
 
   _LoadPlane() {
     const loader = new GLTFLoader();
-      loader.load('./resources/models/plane10x.glb', (gltf) => {
-        gltf.scene.traverse(c => {
-          c.castShadow = true;
-        });
-        
-        this.player = gltf.scene.children[0];
-        this.player.position.set(0, 0, 0);
-        this.player.rotateY(Math.PI / 2);
-        this._scene.add(gltf.scene);
+    loader.load('./resources/models/plane10x.glb', (gltf) => {
+      gltf.scene.traverse(c => {
+        c.castShadow = true;
       });
+
+      this.player = gltf.scene.children[0];
+      this.player.position.set(0, 0, 0);
+      this.player.rotateY(Math.PI / 2);
+      this._scene.add(gltf.scene);
+    });
   }
 
   async _LoadModels() {
@@ -179,6 +216,7 @@ class GameDemo {
       if (model) {
         model.position.set(x, y, z);
         this._scene.add(model);  // Use this._scene instead of scene
+        allObjects.push(model);
       }
     }
   }
@@ -189,6 +227,30 @@ class GameDemo {
     this._threejs.setSize(window.innerWidth, window.innerHeight);
   }
 
+  _RAFAirObjects() {
+    let airObjects = [Cloud, AirObstacle]; // Add other objects if needed
+    const speed = 0.1; // Adjust the speed of movement towards the user
+    airObjects = [...airObjects, ...allObjects]
+    airObjects.forEach((object) => {
+      if (object) {
+        object.position.z += speed;
+  
+        // Add movement logic for clones here
+        if (object.userData && object.userData.isClone) {
+          const cloneSpeed = 0.05; // Adjust the speed of clone movement
+          object.position.x += cloneSpeed;
+  
+          // Reset clone position when it reaches a certain point
+          if (object.position.x > dim) {
+            object.position.x = -dim;
+            object.position.y = generateObjectPos(dim)[1];
+          }
+        }
+      }
+    });
+  }
+
+
   _RAF() {
     requestAnimationFrame(() => {
       const movement = this._input.movement;
@@ -198,28 +260,30 @@ class GameDemo {
       } else if (!movement.up && this._input._keys.up) {
         this._input._keys.up = false;
       }
-  
+
       if (movement.down && !this._input._keys.down) {
         this.moveDown();
         this._input._keys.down = true;
       } else if (!movement.down && this._input._keys.down) {
         this._input._keys.down = false;
       }
-  
+
       if (movement.left && !this._input._keys.left) {
         this.moveLeft();
         this._input._keys.left = true;
       } else if (!movement.left && this._input._keys.left) {
         this._input._keys.left = false;
       }
-  
+
       if (movement.right && !this._input._keys.right) {
         this.moveRight();
         this._input._keys.right = true;
       } else if (!movement.right && this._input._keys.right) {
         this._input._keys.right = false;
       }
+      this._RAFAirObjects();
 
+      this._generateObstacle();
       this._threejs.render(this._scene, this._camera);
       this._RAF();
     });
