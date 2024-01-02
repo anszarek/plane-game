@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-let AirObstacle, Bird, Cloud;
+let PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle;
 const dim = 6;
 let lastChunk = ["first"];
 let allObjects = [];
@@ -160,77 +160,16 @@ class GameDemo {
     this._scene.add(light);
 
     //loading models
-    //this._LoadPlane();
+    this._LoadPlane();
 
     this._RAF();
 
     let [x, y] = generateObjectPos(dim);
-    this._addModel(Cloud.clone(), x, y, -18);
+    this._addModel(CloudObstacle.clone(), x, y, -18);
   }
-  // generic solution
-  // _generateObstacle () {
+ 
 
-  //   const lastZ = allObjects[allObjects.length - 1].position.z ?? -18
-  //   if(lastZ > -10) {
-  //     const obst = Math.floor(Math.random() * 3);
-  //     let usedPositions = [];
-  //     for(let i = 0; i < obst; ++i ) {
-  //       let [x,y] = generateObjectPos(dim, usedPositions);
-  //       usedPositions.push([x,y]);
-  //       this._addModel(Cloud.clone(), x, y, -18)
-  //     }
-  //   }
-
-  // }
-
-  //GUESS AND CHECK
-  // _generateObstacle() {
-  //   const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
-  //   if (lastZ > -10) {
-  //     const pathWidth = 6; // Adjust the width of the clear path
-  //     const pathPosition = Math.floor(Math.random() * 3); // Adjust the position of the clear path
-
-  //     const obst = Math.floor(Math.random() * 5);
-  //     let usedPositions = [];
-  //     for (let i = 0; i < obst; ++i) {
-  //       let [x, y] = generateObjectPos(dim, usedPositions);
-
-  //       // Check if the current position is within the clear path
-  //       if (pathPosition === 0 && x !== -pathWidth && x !== pathWidth) {
-  //         x = x < 0 ? x - pathWidth : x + pathWidth;
-  //       } else if (pathPosition === 1 && y !== -pathWidth && y !== pathWidth) {
-  //         y = y < 0 ? y - pathWidth : y + pathWidth;
-  //       }
-
-  //       usedPositions.push([x, y]);
-  //       this._addModel(Cloud.clone(), x, y, -18);
-  //     }
-  //   }
-  // }
-
-  _generateObstacle() {
-    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
-    if (lastZ > -10) {
-      const pathWidth = 6; // Adjust the width of the clear path
-      const pathPosition = Math.floor(Math.random() * 3); // Adjust the position of the clear path
-
-      const obst = Math.floor(Math.random() * 5);
-      let usedPositions = [];
-      for (let i = 0; i < obst; ++i) {
-        let [x, y] = generateObjectPos(dim, usedPositions);
-
-        // Check if the current position is within the clear path
-        if (pathPosition === 0 && x !== -pathWidth && x !== pathWidth) {
-          x = x < 0 ? x - pathWidth : x + pathWidth;
-        } else if (pathPosition === 1 && y !== -pathWidth && y !== pathWidth) {
-          y = y < 0 ? y - pathWidth : y + pathWidth;
-        }
-
-        usedPositions.push([x, y]);
-        this._addModel(Cloud.clone(), x, y, -18);
-      }
-    }
-  }
+  
 
   _generateChunks = (positions) => {
     const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
@@ -238,7 +177,9 @@ class GameDemo {
     positions.forEach((slice, i) => {
       slice.forEach((object) => {
         this._addModel(
-          Cloud.clone(),
+          // CloudObstacle.clone(),
+          //DogObstacle.clone(),
+          CloudLightningObstacle.clone(),
           object[0],
           object[1],
           -i * 18 - 18 + lastZ
@@ -453,15 +394,15 @@ class GameDemo {
 
   _LoadPlane() {
     const loader = new GLTFLoader();
-    loader.load("./resources/models/plane10x.glb", (gltf) => {
+    loader.load("./resources/models/player.glb", (gltf) => {
       gltf.scene.traverse((c) => {
         c.castShadow = true;
       });
 
       this.player = gltf.scene.children[0];
       this.player.position.set(0, 0, 0);
-      this.player.scale.set(0.7, 0.7, 0.7);
-      this.player.rotateY(Math.PI / 2);
+      // this.player.scale.set(0.7, 0.7, 0.7);
+      // this.player.rotateY(Math.PI / 2);
       this._scene.add(gltf.scene);
     });
   }
@@ -470,28 +411,40 @@ class GameDemo {
     try {
       const loader = new GLTFLoader();
 
-      const loadCloud = () =>
+      const loadCloudObstacle = () =>
         new Promise((resolve) =>
           loader.load("./resources/models/cloud.glb", resolve)
         );
-      const loadAirObstacle = () =>
+      const loadPlaneObstacle = () =>
         new Promise((resolve) =>
-          loader.load("./resources/models/Airplane-obstacle.glb", resolve)
+          loader.load("./resources/models/plane.glb", resolve)
+        );
+        const loadDogObstacle = () =>
+        new Promise((resolve) =>
+          loader.load("./resources/models/dog-in-plane.glb", resolve)
+        );
+        const loadCloudLightningObstacle = () =>
+        new Promise((resolve) =>
+          loader.load("./resources/models/cloud-lightning.glb", resolve)
         );
 
-      const [cloudResult, airObstacleResult] = await Promise.all([
-        loadCloud(),
-        loadAirObstacle(),
+      const [cloudResult, planeResult, dogResult, cloudLightningResult] = await Promise.all([
+        loadCloudObstacle(),
+        loadPlaneObstacle(),
+        loadDogObstacle(),
+        loadCloudLightningObstacle(),
       ]);
 
-      Cloud = cloudResult.scene;
-      Cloud.traverse((child) => {
+      CloudObstacle = cloudResult.scene;
+      CloudObstacle.traverse((child) => {
         if (child.isMesh) {
           child.material.opacity = 0.4;
           child.material.transparent = true;
         }
       });
-      AirObstacle = airObstacleResult.scene;
+      PlaneObstacle = planeResult.scene;
+      DogObstacle = dogResult.scene;
+      CloudLightningObstacle = cloudLightningResult.scene;
     } catch (error) {
       console.error("Error loading models:", error);
     } finally {
@@ -516,7 +469,7 @@ class GameDemo {
   }
 
   _RAFAirObjects() {
-    let airObjects = [Cloud, AirObstacle]; // Add other objects if needed
+    let airObjects = [PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...airObjects, ...allObjects];
 
