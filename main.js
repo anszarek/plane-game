@@ -197,260 +197,170 @@ class GameDemo {
     const chunkA = [
       [
         { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, dim] },
-        { model: CloudObstacle.clone(), position: [-dim, 0] },
-        { model: Coin.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, 0] },
-        { model: Coin.clone(), position: [-dim, 0] },
-      ],
-      [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, 0] },
         { model: CloudObstacle.clone(), position: [dim, dim] },
-        { model: Coin.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: PlaneObstacle.clone(), position: [0, 0] },
+        { model: Coin.clone(), position: [0, dim] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: Coin.clone(), position: [-dim, dim] },
       ],
     ];
     const chunkB = [
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, dim] },
-        { model: CloudObstacle.clone(), position: [-dim, 0] },
-        { model: Coin.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudLightningObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: Coin.clone(), position: [dim, dim] },
       ],
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
         { model: Coin.clone(), position: [0, 0] },
       ],
       [
-        { model: CloudObstacle.clone(), position: [dim, 0] },
-        { model: DogObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudLightningObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
     ];
     const chunkC = [
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: PlaneObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, 0] },
         { model: CloudObstacle.clone(), position: [dim, dim] },
-        { model: CloudObstacle.clone(), position: [dim, 0] },
-        { model: Coin.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: Coin.clone(), position: [0, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [0, 0] },
+        { model: CloudLightningObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [-dim, 0] },
       ],
     ];
     const chunkD = [
       [
         { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, dim] },
-        { model: CloudObstacle.clone(), position: [-dim, 0] },
-        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
+        { model: PlaneObstacle.clone(), position: [0, -dim] },
+        { model: Coin.clone(), position: [0, dim] },
       ],
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudLightningObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [-dim, dim] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
         { model: CloudObstacle.clone(), position: [dim, dim] },
-        { model: Coin.clone(), position: [dim, 0] },
-        { model: DogObstacle.clone(), position: [-dim, -dim] },
+        { model: Coin.clone(), position: [0, dim] },
       ],
     ];
     const chunkE = [
       [
-        { model: CloudObstacle.clone(), position: [-dim, dim] },
-        { model: DogObstacle.clone(), position: [0, dim] },
         { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
+        { model: Coin.clone(), position: [0, -dim] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: CloudLightningObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
         { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: Coin.clone(), position: [0, dim] },
+      ],
+    ];
+    const chunkF = [
+      [
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudLightningObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
       [
         { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: Coin.clone(), position: [0, dim] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
         { model: Coin.clone(), position: [0, 0] },
       ],
     ];
+    const chunkG = [
+      [
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudLightningObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [dim, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: PlaneObstacle.clone(), position: [-dim, -dim] },
+        { model: Coin.clone(), position: [0, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [0, dim] },
+        { model: CloudLightningObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [-dim, 0] },
+      ],
+    ];
+    const chunkH = [
+      [
+        { model: CloudObstacle.clone(), position: [0, 0] },
+        { model: Coin.clone(), position: [dim, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [-dim, -dim] },
+        { model: CloudObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [dim, 0] },
+      ],
+      [
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudLightningObstacle.clone(), position: [-dim, 0] },
+        { model: Coin.clone(), position: [dim, -dim] },
+      ],
+    ];
 
-    // const chunkA = [
-    //   [
-    //     [-dim, dim],
-    //     [0, dim],
-    //     [dim, 0],
-    //     [0, -dim],
-    //   ],
-    //   [
-    //     [-dim, dim],
-    //     [0, 0],
-    //   ],
-    //   [
-    //     [-dim, -dim],
-    //     [0, 0],
-    //     [dim, dim],
-    //     [dim, 0],
-    //     [dim, -dim],
-    //   ],
-    // ];
-    // const chunkB = [
-    //   [
-    //     [-dim, dim],
-    //     [-dim, 0],
-    //     [-dim, -dim],
-    //     [dim, 0],
-    //   ],
-    //   [
-    //     [-dim, dim],
-    //     [dim, dim],
-    //     [dim, -dim],
-    //   ],
-    //   [
-    //     [-dim, -dim],
-    //     [0, dim],
-    //     [dim, dim],
-    //     [dim, -dim],
-    //   ],
-    // ];
-    // const chunkC = [
-    //   [
-    //     [0, 0],
-    //     [0, -dim],
-    //     [dim, dim],
-    //     [dim, 0],
-    //   ],
-    //   [
-    //     [-dim, 0],
-    //     [dim, 0],
-    //   ],
-    //   [
-    //     [-dim, -dim],
-    //     [-dim, 0],
-    //     [-dim, dim],
-    //     [dim, dim],
-    //     [dim, 0],
-    //     [dim, -dim],
-    //   ],
-    // ];
-    // const chunkD = [
-    //   [
-    //     [-dim, dim],
-    //     [0, dim],
-    //     [dim, dim],
-    //     [dim, -dim],
-    //   ],
-    //   [
-    //     [-dim, dim],
-    //     [-dim, 0],
-    //     [-dim, -dim],
-    //     [0, dim],
-    //     [dim, dim],
-    //     [dim, 0],
-    //     [dim, -dim],
-    //   ],
-    //   [
-    //     [-dim, -dim],
-    //     [0, dim],
-    //     [0, -dim],
-    //   ],
-    // ];
-    // const chunkE = [
-    //   [
-    //     [-dim, dim],
-    //     [dim, dim],
-    //     [dim, -dim],
-    //   ],
-    //   [
-    //     [0, dim],
-    //     [0, 0],
-    //     [0, -dim],
-    //   ],
-    //   [
-    //     [-dim, dim],
-    //     [-dim, -dim],
-    //     [dim, dim],
-    //   ],
-    // ];
     console.log(lastChunk);
     let chunk = lastChunk.pop();
 
     if (chunk === "first") {
       const avaliableChunk = [
-        this._generateChunks(chunkC),
-        this._generateChunks(chunkD),
-        this._generateChunks(chunkE),
-      ];
-      const chosen = Math.floor(Math.random() * avaliableChunk.length);
-      avaliableChunk[chosen];
-      switch (chosen) {
-        case 0:
-          lastChunk.push("third");
-          break;
-        case 1:
-          lastChunk.push("fourth");
-          break;
-        case 2:
-          lastChunk.push("fifth");
-          break;
-      }
-      return;
-    }
-    if (chunk === "second") {
-      const avaliableChunk = [
-        this._generateChunks(chunkA),
-        this._generateChunks(chunkE),
-      ];
-      const chosen = Math.floor(Math.random() * avaliableChunk.length);
-      avaliableChunk[chosen];
-      switch (chosen) {
-        case 0:
-          lastChunk.push("first");
-          break;
-        case 1:
-          lastChunk.push("fifth");
-          break;
-      }
-      return;
-    }
-    if (chunk === "third") {
-      const avaliableChunk = [
-        this._generateChunks(chunkA),
-        this._generateChunks(chunkC),
-        this._generateChunks(chunkE),
-      ];
-      const chosen = Math.floor(Math.random() * avaliableChunk.length);
-      avaliableChunk[chosen];
-      switch (chosen) {
-        case 0:
-          lastChunk.push("first");
-          break;
-        case 1:
-          lastChunk.push("third");
-          break;
-        case 2:
-          lastChunk.push("fifth");
-          break;
-      }
-      return;
-    }
-    if (chunk === "fourth") {
-      const avaliableChunk = [
-        this._generateChunks(chunkA),
-        this._generateChunks(chunkE),
-      ];
-      const chosen = Math.floor(Math.random() * avaliableChunk.length);
-      avaliableChunk[chosen];
-      switch (chosen) {
-        case 0:
-          lastChunk.push("first");
-          break;
-        case 1:
-          lastChunk.push("fifth");
-          break;
-      }
-      return;
-    }
-    if (chunk === "fifth") {
-      const avaliableChunk = [
         this._generateChunks(chunkB),
         this._generateChunks(chunkC),
         this._generateChunks(chunkD),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkH),
       ];
       const chosen = Math.floor(Math.random() * avaliableChunk.length);
       avaliableChunk[chosen];
@@ -463,6 +373,191 @@ class GameDemo {
           break;
         case 2:
           lastChunk.push("fourth");
+          break;
+        case 3:
+          lastChunk.push("sixth");
+          break;
+        case 4:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "second") {
+      const avaliableChunk = [
+        this._generateChunks(chunkA),
+        this._generateChunks(chunkC),
+        this._generateChunks(chunkE),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("first");
+          break;
+        case 1:
+          lastChunk.push("third");
+          break;
+        case 2:
+          lastChunk.push("fifth");
+          break;
+        case 3:
+          lastChunk.push("sixth");
+          break;
+        case 4:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "third") {
+      const avaliableChunk = [
+        this._generateChunks(chunkA),
+        this._generateChunks(chunkB),
+        this._generateChunks(chunkE),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("first");
+          break;
+        case 1:
+          lastChunk.push("second");
+          break;
+        case 2:
+          lastChunk.push("fifth");
+          break;
+        case 3:
+          lastChunk.push("sixth");
+          break;
+        case 4:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "fourth") {
+      const avaliableChunk = [
+        this._generateChunks(chunkA),
+        this._generateChunks(chunkC),
+        this._generateChunks(chunkE),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkG),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("first");
+          break;
+        case 1:
+          lastChunk.push("third");
+          break;
+        case 2:
+          lastChunk.push("fifth");
+          break;
+        case 3:
+          lastChunk.push("sixth");
+          break;
+        case 4:
+          lastChunk.push("seventh");
+          break;
+        case 5:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "fifth") {
+      const avaliableChunk = [
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("sixth");
+          break;
+        case 1:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "sixth") {
+      const avaliableChunk = [
+        this._generateChunks(chunkC),
+        this._generateChunks(chunkD),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("third");
+          break;
+        case 1:
+          lastChunk.push("fourth");
+          break;
+        case 2:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "seventh") {
+      const avaliableChunk = [
+        this._generateChunks(chunkE),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkH),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("fifth");
+          break;
+        case 1:
+          lastChunk.push("sixth");
+          break;
+        case 2:
+          lastChunk.push("eighth");
+          break;
+      }
+      return;
+    }
+    if (chunk === "eighth") {
+      const avaliableChunk = [
+        this._generateChunks(chunkA),
+        this._generateChunks(chunkB),
+        this._generateChunks(chunkE),
+        this._generateChunks(chunkF),
+        this._generateChunks(chunkG),
+      ];
+      const chosen = Math.floor(Math.random() * avaliableChunk.length);
+      avaliableChunk[chosen];
+      switch (chosen) {
+        case 0:
+          lastChunk.push("first");
+          break;
+        case 1:
+          lastChunk.push("second");
+          break;
+        case 2:
+          lastChunk.push("fifth");
+          break;
+        case 3:
+          lastChunk.push("sixth");
+          break;
+        case 4:
+          lastChunk.push("seventh");
           break;
       }
       return;
@@ -478,8 +573,6 @@ class GameDemo {
 
       this.player = gltf.scene.children[0];
       this.player.position.set(0, 0, 0);
-      // this.player.scale.set(0.7, 0.7, 0.7);
-      // this.player.rotateY(Math.PI / 2);
       this._scene.add(gltf.scene);
     });
   }
