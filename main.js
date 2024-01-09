@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-let PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle;
+let PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle, Coin;
 const dim = 6;
 let lastChunk = ["first"];
 let allObjects = [];
@@ -176,12 +176,12 @@ class GameDemo {
 
     positions.forEach((slice, i) => {
       slice.forEach((object) => {
+        const { model, position } = object;
         this._addModel(
-          // CloudObstacle.clone(),
-          //DogObstacle.clone(),
-          CloudLightningObstacle.clone(),
-          object[0],
-          object[1],
+          //CloudObstacle.clone(),
+          model,
+          position[0],
+          position[1],
           -i * 18 - 18 + lastZ
         );
       });
@@ -193,103 +193,180 @@ class GameDemo {
     if (lastZ < -50) {
       return;
     }
+
     const chunkA = [
       [
-        [-dim, dim],
-        [0, dim],
-        [dim, 0],
-        [0, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: Coin.clone(), position: [0, -dim] },
       ],
       [
-        [-dim, dim],
-        [0, 0],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: Coin.clone(), position: [-dim, 0] },
       ],
       [
-        [-dim, -dim],
-        [0, 0],
-        [dim, dim],
-        [dim, 0],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [-dim, 0] },
       ],
     ];
     const chunkB = [
       [
-        [-dim, dim],
-        [-dim, 0],
-        [-dim, -dim],
-        [dim, 0],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: Coin.clone(), position: [0, -dim] },
       ],
       [
-        [-dim, dim],
-        [dim, dim],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
       [
-        [-dim, -dim],
-        [0, dim],
-        [dim, dim],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [dim, 0] },
+        { model: DogObstacle.clone(), position: [-dim, -dim] },
       ],
     ];
     const chunkC = [
       [
-        [0, 0],
-        [0, -dim],
-        [dim, dim],
-        [dim, 0],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, 0] },
       ],
       [
-        [-dim, 0],
-        [dim, 0],
-      ],
-      [
-        [-dim, -dim],
-        [-dim, 0],
-        [-dim, dim],
-        [dim, dim],
-        [dim, 0],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: CloudObstacle.clone(), position: [dim, 0] },
+        { model: Coin.clone(), position: [-dim, -dim] },
       ],
     ];
     const chunkD = [
       [
-        [-dim, dim],
-        [0, dim],
-        [dim, dim],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
       ],
       [
-        [-dim, dim],
-        [-dim, 0],
-        [-dim, -dim],
-        [0, dim],
-        [dim, dim],
-        [dim, 0],
-        [dim, -dim],
-      ],
-      [
-        [-dim, -dim],
-        [0, dim],
-        [0, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, 0] },
+        { model: CloudObstacle.clone(), position: [dim, dim] },
+        { model: Coin.clone(), position: [dim, 0] },
+        { model: DogObstacle.clone(), position: [-dim, -dim] },
       ],
     ];
     const chunkE = [
       [
-        [-dim, dim],
-        [dim, dim],
-        [dim, -dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: DogObstacle.clone(), position: [0, dim] },
+        { model: CloudObstacle.clone(), position: [-dim, 0] },
+        { model: CloudObstacle.clone(), position: [0, -dim] },
       ],
       [
-        [0, dim],
-        [0, 0],
-        [0, -dim],
-      ],
-      [
-        [-dim, dim],
-        [-dim, -dim],
-        [dim, dim],
+        { model: CloudObstacle.clone(), position: [-dim, dim] },
+        { model: Coin.clone(), position: [0, 0] },
       ],
     ];
+
+    // const chunkA = [
+    //   [
+    //     [-dim, dim],
+    //     [0, dim],
+    //     [dim, 0],
+    //     [0, -dim],
+    //   ],
+    //   [
+    //     [-dim, dim],
+    //     [0, 0],
+    //   ],
+    //   [
+    //     [-dim, -dim],
+    //     [0, 0],
+    //     [dim, dim],
+    //     [dim, 0],
+    //     [dim, -dim],
+    //   ],
+    // ];
+    // const chunkB = [
+    //   [
+    //     [-dim, dim],
+    //     [-dim, 0],
+    //     [-dim, -dim],
+    //     [dim, 0],
+    //   ],
+    //   [
+    //     [-dim, dim],
+    //     [dim, dim],
+    //     [dim, -dim],
+    //   ],
+    //   [
+    //     [-dim, -dim],
+    //     [0, dim],
+    //     [dim, dim],
+    //     [dim, -dim],
+    //   ],
+    // ];
+    // const chunkC = [
+    //   [
+    //     [0, 0],
+    //     [0, -dim],
+    //     [dim, dim],
+    //     [dim, 0],
+    //   ],
+    //   [
+    //     [-dim, 0],
+    //     [dim, 0],
+    //   ],
+    //   [
+    //     [-dim, -dim],
+    //     [-dim, 0],
+    //     [-dim, dim],
+    //     [dim, dim],
+    //     [dim, 0],
+    //     [dim, -dim],
+    //   ],
+    // ];
+    // const chunkD = [
+    //   [
+    //     [-dim, dim],
+    //     [0, dim],
+    //     [dim, dim],
+    //     [dim, -dim],
+    //   ],
+    //   [
+    //     [-dim, dim],
+    //     [-dim, 0],
+    //     [-dim, -dim],
+    //     [0, dim],
+    //     [dim, dim],
+    //     [dim, 0],
+    //     [dim, -dim],
+    //   ],
+    //   [
+    //     [-dim, -dim],
+    //     [0, dim],
+    //     [0, -dim],
+    //   ],
+    // ];
+    // const chunkE = [
+    //   [
+    //     [-dim, dim],
+    //     [dim, dim],
+    //     [dim, -dim],
+    //   ],
+    //   [
+    //     [0, dim],
+    //     [0, 0],
+    //     [0, -dim],
+    //   ],
+    //   [
+    //     [-dim, dim],
+    //     [-dim, -dim],
+    //     [dim, dim],
+    //   ],
+    // ];
     console.log(lastChunk);
     let chunk = lastChunk.pop();
 
@@ -419,20 +496,25 @@ class GameDemo {
         new Promise((resolve) =>
           loader.load("./resources/models/plane.glb", resolve)
         );
-        const loadDogObstacle = () =>
+      const loadDogObstacle = () =>
         new Promise((resolve) =>
           loader.load("./resources/models/dog-in-plane.glb", resolve)
         );
-        const loadCloudLightningObstacle = () =>
+      const loadCloudLightningObstacle = () =>
         new Promise((resolve) =>
           loader.load("./resources/models/cloud-lightning.glb", resolve)
         );
+      const loadCoin = () =>
+        new Promise((resolve) =>
+          loader.load("./resources/models/coin.glb", resolve)
+        );
 
-      const [cloudResult, planeResult, dogResult, cloudLightningResult] = await Promise.all([
+      const [cloudResult, planeResult, dogResult, cloudLightningResult, coinResult] = await Promise.all([
         loadCloudObstacle(),
         loadPlaneObstacle(),
         loadDogObstacle(),
         loadCloudLightningObstacle(),
+        loadCoin(),
       ]);
 
       CloudObstacle = cloudResult.scene;
@@ -445,6 +527,7 @@ class GameDemo {
       PlaneObstacle = planeResult.scene;
       DogObstacle = dogResult.scene;
       CloudLightningObstacle = cloudLightningResult.scene;
+      Coin = coinResult.scene;
     } catch (error) {
       console.error("Error loading models:", error);
     } finally {
@@ -469,7 +552,7 @@ class GameDemo {
   }
 
   _RAFAirObjects() {
-    let airObjects = [PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle]; // Add other objects if needed
+    let airObjects = [PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle, Coin]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...airObjects, ...allObjects];
 
