@@ -638,7 +638,7 @@ class GameDemo {
         }
       });
       PlaneObstacle = planeResult.scene;
-      PlaneObstacle.modelName = "PlaneObstacle";
+      PlaneObstacle.name = "PlaneObstacle";
       DogObstacle = dogResult.scene;
       CloudLightningObstacle = cloudLightningResult.scene;
       CloudLightningObstacle.traverse((child) => {
@@ -702,8 +702,7 @@ class GameDemo {
           // Check if the object's z position is greater than 0 and make it invisible
           //camera is on z = 70, player x = 0
           if (object.position.z > 10) {
-            //console.log(object.modelName, object.modelName === 'PlaneObstacle')
-            if (object.modelName === "PlaneObstacle") {
+            if (object.name === "PlaneObstacle") {
               if (object.position.z > 100) {
                 object.visible = false;
                 object.userData.crossedThreshold = true;
@@ -726,7 +725,7 @@ class GameDemo {
   
           if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
           // Collision detected between player and current object
-          console.log("Collision occurred!");
+          // console.log("Collision occurred!");
           }
           }
         }
