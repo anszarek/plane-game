@@ -133,7 +133,9 @@ class GameDemo {
     const near = 1.0;
     const far = 1000.0;
     this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(0, 1, 25);  //set(0, 0, 70);
+    this._camera.position.set(0, 0, 90);
+
+    this._camera.rotation.x += -0.15;
 
     //scene
     this._scene = new THREE.Scene();
@@ -654,8 +656,8 @@ class GameDemo {
     let airObjects = [PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle, Coin]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...airObjects, ...allObjects];
-
-    airObjects.forEach((object) => {
+    let indexes = [];
+    airObjects.forEach((object, index) => {
       if (object) {
         object.position.z += speed;
 
@@ -672,10 +674,11 @@ class GameDemo {
         }
 
         // Check if the object's z position is greater than 0 and make it invisible
-        // camera is on z = 25, player z = 0
-        if (object.position.z > 10 && !object.userData.crossedThreshold) {  //50
+        //camera is on z = 70, player x = 0
+        if (object.position.z > 100) {
           object.visible = false;
           object.userData.crossedThreshold = true;
+          indexes.push(index)
         } else if (object.position.z <= 0) {
           object.visible = true;
           object.userData.crossedThreshold = false;
@@ -683,6 +686,13 @@ class GameDemo {
       
       }
     });
+
+    indexes.reverse()
+    indexes.forEach(indexToDelete => {
+      airObjects.splice(indexToDelete, 1);
+    })
+
+    indexes.length = 0;
   }
 
   _RAF() {
@@ -717,10 +727,12 @@ class GameDemo {
       }
       this._RAFAirObjects();
 
-      //this._generateObstacle();
+
       this._chooseChunks();
       this._threejs.render(this._scene, this._camera);
       this._RAF();
+
+
     });
   }
 
