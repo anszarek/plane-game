@@ -105,6 +105,8 @@ class GameDemo {
   constructor() {
     this._Initialize();
     this._input = new BasicCharacterControllerInput(this);
+    this._collectedCoins = 0;
+    this._gameOver = false;
   }
 
   async _Initialize() {
@@ -185,6 +187,7 @@ class GameDemo {
           position[1],
           -i * 18 - 18 + lastZ
         );
+
       });
     });
   };
@@ -648,6 +651,7 @@ class GameDemo {
         }
       });
       Coin = coinResult.scene;
+      Coin.name = "Coin";
     } catch (error) {
       console.error("Error loading models:", error);
     } finally {
@@ -662,6 +666,7 @@ class GameDemo {
         this._scene.add(model); // Use this._scene instead of scene
         allObjects.push(model);
       }
+      
     }
   }
 
@@ -672,6 +677,9 @@ class GameDemo {
   }
 
   _RAFAirObjects() {
+    if (this._gameOver) {
+      return; // Stop updating objects if the game is over
+    }
     let airObjects = [
       PlaneObstacle,
       DogObstacle,
@@ -681,7 +689,6 @@ class GameDemo {
     ]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...allObjects];
-    let indexes = [];
     airObjects.forEach((object, index) => {
       
         if (object) {
@@ -698,40 +705,55 @@ class GameDemo {
               object.position.y = generateObjectPos(dim)[1];
             }
           }
-  
-          // Check if the object's z position is greater than 0 and make it invisible
-          //camera is on z = 70, player x = 0
-          if (object.position.z > 10) {
-            if (object.name === "PlaneObstacle") {
-              if (object.position.z > 100) {
-                object.visible = false;
-                object.userData.crossedThreshold = true;
-                indexes.push(index);
-              }
-            } else {
-              object.visible = false;
-              object.userData.crossedThreshold = true;
-              indexes.push(index);
-            }
-          } else if (object.position.z <= 0) {
-            object.visible = true;
-            object.userData.crossedThreshold = false;
-          }
-  
-          // Check collision between player and other objects
-          const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
-          for (let i = 0; i < allObjects.length; i++) {
-            const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
-  
-          if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-          // Collision detected between player and current object
-          // console.log("Collision occurred!");
-          }
-          }
+          
         }
 
       
     });
+    let indexes = [];
+
+    airObjects.slice(9).forEach((object, index) => {
+      if (object.position.z > 10) {
+        if (object.name === "PlaneObstacle") {
+          if (object.position.z > 100) {
+            object.visible = false;
+            object.userData.crossedThreshold = true;
+            indexes.push(index);
+          }
+        } else {
+          object.visible = false;
+          object.userData.crossedThreshold = true;
+          indexes.push(index);
+        }
+      } else if (object.position.z <= 0) {
+        object.visible = true;
+        object.userData.crossedThreshold = false;
+      }
+
+      // Check collision between player and other objects
+      const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
+      for (let i = 0; i < allObjects.length; i++) {
+        const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
+
+        if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
+          // Collision detected between player and current object
+          if (allObjects[i].name === 'Coin') {
+            allObjects[i].position.z = 50;
+            allObjects[i].visible = false;
+            allObjects[i].userData.crossedThreshold = true;
+            airObjects.splice(index, 1);
+
+            this._collectedCoins++;
+            console.log(`Collected Coins: ${this._collectedCoins}`);
+          }else {
+            // Collision with non-coin object, game over
+            this._gameOver = true;
+            console.log('Game Over!'); // You can replace this with your game over logic
+          }
+          
+        }
+      }
+    })
 
     indexes.reverse();
     indexes.forEach((indexToDelete) => {
