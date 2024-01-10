@@ -166,7 +166,14 @@ class GameDemo {
   }
 
   _generateChunks = (positions) => {
-    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
+    const lastSlice = allObjects.length - 1;
+    let lastZ
+    if(lastSlice === -1) {
+      lastZ = -18
+    } else {
+
+      lastZ = allObjects[lastSlice].position.z;
+    }
 
     positions.forEach((slice, i) => {
       slice.forEach((object) => {
@@ -340,11 +347,15 @@ class GameDemo {
       ],
     ];
 
-    if (allObjects.length === 0) {
-      allObjects = [...chunkA];
+
+    const LastElement = allObjects.length - 1;
+
+    if(allObjects.length ===0 ) {
+      this._generateChunks(chunkA);
       return;
     }
-    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
+
+    const lastZ = allObjects[LastElement].position.z ?? -18;
     if (lastZ < -50) {
       return;
     }
@@ -671,11 +682,9 @@ class GameDemo {
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...allObjects];
     let indexes = [];
-    console.log(airObjects)
-    airObjects.forEach((slice, index) => {
-      slice.forEach((object, yndex) => {
+    airObjects.forEach((object, index) => {
+      
         if (object) {
-          console.log(object)
           object.position.z += speed;
   
           // Add movement logic for clones here
@@ -710,44 +719,18 @@ class GameDemo {
             object.userData.crossedThreshold = false;
           }
   
-          // // Check collision between player and other objects
-          // const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
-          // for (let i = 0; i < allObjects.length; i++) {
-          //   const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
+          // Check collision between player and other objects
+          const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
+          for (let i = 0; i < allObjects.length; i++) {
+            const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
   
-          // if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-          // // Collision detected between player and current object
-          // // Handle collision logic here
-          // console.log("Collision occurred!");
-          // // For instance:
-          // // this.player.position.set(0, 0, 0); // Reset player position
-          // // Decrease player's health, etc.
-          // }
-          // }
-  
-          // setTimeout(() => {
-          //   const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
-  
-          //   for (let i = 0; i < allObjects.length; i++) {
-          //     const object = allObjects[i];
-          //     if (object && object.updateWorldMatrix && object !== this.player) {
-          //       // Validate the object and exclude the player object to avoid self-collision
-  
-          //       const objectBoundingBox = new THREE.Box3().setFromObject(object);
-  
-          //       if (objectBoundingBox) {
-          //         if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-          //           // Handle collision logic here
-          //           console.log("Collision occurred!");
-          //         }
-          //       } else {
-          //         console.warn(`Object ${i} bounding box not created properly`);
-          //       }
-          //     }
-          //   }
-          // }, 1000);
+          if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
+          // Collision detected between player and current object
+          console.log("Collision occurred!");
+          }
+          }
         }
-      })
+
       
     });
 
