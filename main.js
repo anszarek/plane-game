@@ -133,7 +133,7 @@ class GameDemo {
     const near = 1.0;
     const far = 1000.0;
     this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(0, 0, 90);
+    this._camera.position.set(0, 0, 25);
 
     this._camera.rotation.x += -0.15;
 
@@ -169,9 +169,6 @@ class GameDemo {
     let [x, y] = generateObjectPos(dim);
     this._addModel(CloudObstacle.clone(), x, y, -18);
   }
- 
-
-  
 
   _generateChunks = (positions) => {
     const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
@@ -604,7 +601,13 @@ class GameDemo {
           loader.load("./resources/models/coin.glb", resolve)
         );
 
-      const [cloudResult, planeResult, dogResult, cloudLightningResult, coinResult] = await Promise.all([
+      const [
+        cloudResult,
+        planeResult,
+        dogResult,
+        cloudLightningResult,
+        coinResult,
+      ] = await Promise.all([
         loadCloudObstacle(),
         loadPlaneObstacle(),
         loadDogObstacle(),
@@ -620,6 +623,7 @@ class GameDemo {
         }
       });
       PlaneObstacle = planeResult.scene;
+      PlaneObstacle.modelName = "PlaneObstacle";
       DogObstacle = dogResult.scene;
       CloudLightningObstacle = cloudLightningResult.scene;
       CloudLightningObstacle.traverse((child) => {
@@ -653,7 +657,13 @@ class GameDemo {
   }
 
   _RAFAirObjects() {
-    let airObjects = [PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle, Coin]; // Add other objects if needed
+    let airObjects = [
+      PlaneObstacle,
+      DogObstacle,
+      CloudObstacle,
+      CloudLightningObstacle,
+      Coin,
+    ]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...airObjects, ...allObjects];
     let indexes = [];
@@ -675,22 +685,47 @@ class GameDemo {
 
         // Check if the object's z position is greater than 0 and make it invisible
         //camera is on z = 70, player x = 0
-        if (object.position.z > 100) {
-          object.visible = false;
-          object.userData.crossedThreshold = true;
-          indexes.push(index)
+        if (object.position.z > 10) {
+          //console.log(object.modelName, object.modelName === 'PlaneObstacle')
+          if (object.modelName === "PlaneObstacle") {
+              if (object.position.z > 100) {
+                object.visible = false;
+                object.userData.crossedThreshold = true;
+                indexes.push(index);
+              }
+          } else {
+              object.visible = false;
+              object.userData.crossedThreshold = true;
+              indexes.push(index);
+            }
         } else if (object.position.z <= 0) {
           object.visible = true;
           object.userData.crossedThreshold = false;
         }
-      
+
+
+        // Check collision between player and other objects
+        const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
+        for (let i = 0; i < allObjects.length; i++) {
+          const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
+
+        if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
+        // Collision detected between player and current object
+        // Handle collision logic here
+        console.log("Collision occurred!");
+        // For instance:
+        // this.player.position.set(0, 0, 0); // Reset player position
+        // Decrease player's health, etc.
+        }
+        }
+
       }
     });
 
-    indexes.reverse()
-    indexes.forEach(indexToDelete => {
+    indexes.reverse();
+    indexes.forEach((indexToDelete) => {
       airObjects.splice(indexToDelete, 1);
-    })
+    });
 
     indexes.length = 0;
   }
@@ -727,12 +762,9 @@ class GameDemo {
       }
       this._RAFAirObjects();
 
-
       this._chooseChunks();
       this._threejs.render(this._scene, this._camera);
       this._RAF();
-
-
     });
   }
 
@@ -745,6 +777,7 @@ class GameDemo {
       newY = maxY;
     }
     this.player.position.y = newY;
+    this._camera.position.y = newY;
   }
   moveDown() {
     const step = 6;
@@ -754,6 +787,7 @@ class GameDemo {
       newY = minY;
     }
     this.player.position.y = newY;
+    this._camera.position.y = newY;
   }
   moveLeft() {
     const step = 6;
@@ -763,6 +797,7 @@ class GameDemo {
       newX = minX;
     }
     this.player.position.x = newX;
+    this._camera.position.x = newX;
   }
   moveRight() {
     const step = 6;
@@ -772,6 +807,7 @@ class GameDemo {
       newX = maxX;
     }
     this.player.position.x = newX;
+    this._camera.position.x = newX;
   }
 }
 
