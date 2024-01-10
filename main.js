@@ -161,13 +161,8 @@ class GameDemo {
     light = new THREE.AmbientLight(0x101010);
     this._scene.add(light);
 
-    //loading models
-    this._LoadPlane();
 
     this._RAF();
-
-    let [x, y] = generateObjectPos(dim);
-    this._addModel(CloudObstacle.clone(), x, y, -18);
   }
 
   _generateChunks = (positions) => {
@@ -188,11 +183,6 @@ class GameDemo {
   };
 
   _chooseChunks = () => {
-    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
-    if (lastZ < -50) {
-      return;
-    }
-
     const chunkA = [
       [
         { model: CloudObstacle.clone(), position: [-dim, dim] },
@@ -350,7 +340,15 @@ class GameDemo {
       ],
     ];
 
-    console.log(lastChunk);
+    if (allObjects.length === 0) {
+      allObjects = [...chunkA];
+      return;
+    }
+    const lastZ = allObjects[allObjects.length - 1].position.z ?? -18;
+    if (lastZ < -50) {
+      return;
+    }
+
     let chunk = lastChunk.pop();
 
     if (chunk === "first") {
@@ -563,22 +561,27 @@ class GameDemo {
     }
   };
 
-  _LoadPlane() {
-    const loader = new GLTFLoader();
-    loader.load("./resources/models/player.glb", (gltf) => {
-      gltf.scene.traverse((c) => {
-        c.castShadow = true;
-      });
-
-      this.player = gltf.scene.children[0];
-      this.player.position.set(0, 0, 0);
-      this._scene.add(gltf.scene);
-    });
-  }
-
   async _LoadModels() {
     try {
       const loader = new GLTFLoader();
+
+      const loadPlayer = () => {
+        new Promise((resolve) => {
+          loader.load(
+            "./resources/models/player.glb",
+            (gltf) => {
+              gltf.scene.traverse((c) => {
+                c.castShadow = true;
+              });
+
+              this.player = gltf.scene.children[0];
+              this.player.position.set(0, 0, 0);
+              this._scene.add(gltf.scene);
+            },
+            resolve
+          );
+        });
+      };
 
       const loadCloudObstacle = () =>
         new Promise((resolve) =>
@@ -613,6 +616,7 @@ class GameDemo {
         loadDogObstacle(),
         loadCloudLightningObstacle(),
         loadCoin(),
+        loadPlayer(),
       ]);
 
       CloudObstacle = cloudResult.scene;
@@ -665,61 +669,86 @@ class GameDemo {
       Coin,
     ]; // Add other objects if needed
     const speed = 0.1; // Adjust the speed of movement towards the user
-    airObjects = [...airObjects, ...allObjects];
+    airObjects = [...allObjects];
     let indexes = [];
-    airObjects.forEach((object, index) => {
-      if (object) {
-        object.position.z += speed;
-
-        // Add movement logic for clones here
-        if (object.userData && object.userData.isClone) {
-          const cloneSpeed = 0.05; // Adjust the speed of clone movement
-          object.position.x += cloneSpeed;
-
-          // Reset clone position when it reaches a certain point
-          if (object.position.x > dim) {
-            object.position.x = -dim;
-            object.position.y = generateObjectPos(dim)[1];
+    console.log(airObjects)
+    airObjects.forEach((slice, index) => {
+      slice.forEach((object, yndex) => {
+        if (object) {
+          console.log(object)
+          object.position.z += speed;
+  
+          // Add movement logic for clones here
+          if (object.userData && object.userData.isClone) {
+            const cloneSpeed = 0.05; // Adjust the speed of clone movement
+            object.position.x += cloneSpeed;
+  
+            // Reset clone position when it reaches a certain point
+            if (object.position.x > dim) {
+              object.position.x = -dim;
+              object.position.y = generateObjectPos(dim)[1];
+            }
           }
-        }
-
-        // Check if the object's z position is greater than 0 and make it invisible
-        //camera is on z = 70, player x = 0
-        if (object.position.z > 10) {
-          //console.log(object.modelName, object.modelName === 'PlaneObstacle')
-          if (object.modelName === "PlaneObstacle") {
+  
+          // Check if the object's z position is greater than 0 and make it invisible
+          //camera is on z = 70, player x = 0
+          if (object.position.z > 10) {
+            //console.log(object.modelName, object.modelName === 'PlaneObstacle')
+            if (object.modelName === "PlaneObstacle") {
               if (object.position.z > 100) {
                 object.visible = false;
                 object.userData.crossedThreshold = true;
                 indexes.push(index);
               }
-          } else {
+            } else {
               object.visible = false;
               object.userData.crossedThreshold = true;
               indexes.push(index);
             }
-        } else if (object.position.z <= 0) {
-          object.visible = true;
-          object.userData.crossedThreshold = false;
+          } else if (object.position.z <= 0) {
+            object.visible = true;
+            object.userData.crossedThreshold = false;
+          }
+  
+          // // Check collision between player and other objects
+          // const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
+          // for (let i = 0; i < allObjects.length; i++) {
+          //   const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
+  
+          // if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
+          // // Collision detected between player and current object
+          // // Handle collision logic here
+          // console.log("Collision occurred!");
+          // // For instance:
+          // // this.player.position.set(0, 0, 0); // Reset player position
+          // // Decrease player's health, etc.
+          // }
+          // }
+  
+          // setTimeout(() => {
+          //   const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
+  
+          //   for (let i = 0; i < allObjects.length; i++) {
+          //     const object = allObjects[i];
+          //     if (object && object.updateWorldMatrix && object !== this.player) {
+          //       // Validate the object and exclude the player object to avoid self-collision
+  
+          //       const objectBoundingBox = new THREE.Box3().setFromObject(object);
+  
+          //       if (objectBoundingBox) {
+          //         if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
+          //           // Handle collision logic here
+          //           console.log("Collision occurred!");
+          //         }
+          //       } else {
+          //         console.warn(`Object ${i} bounding box not created properly`);
+          //       }
+          //     }
+          //   }
+          // }, 1000);
         }
-
-
-        // Check collision between player and other objects
-        const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
-        for (let i = 0; i < allObjects.length; i++) {
-          const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
-
-        if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-        // Collision detected between player and current object
-        // Handle collision logic here
-        console.log("Collision occurred!");
-        // For instance:
-        // this.player.position.set(0, 0, 0); // Reset player position
-        // Decrease player's health, etc.
-        }
-        }
-
-      }
+      })
+      
     });
 
     indexes.reverse();
