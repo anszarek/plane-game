@@ -133,7 +133,7 @@ class GameDemo {
     const near = 1.0;
     const far = 1000.0;
     this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(0, 0, 70);
+    this._camera.position.set(0, 1, 25);  //set(0, 0, 70);
 
     //scene
     this._scene = new THREE.Scene();
@@ -620,6 +620,12 @@ class GameDemo {
       PlaneObstacle = planeResult.scene;
       DogObstacle = dogResult.scene;
       CloudLightningObstacle = cloudLightningResult.scene;
+      CloudLightningObstacle.traverse((child) => {
+        if (child.isMesh) {
+          child.material.opacity = 0.8;
+          child.material.transparent = true;
+        }
+      });
       Coin = coinResult.scene;
     } catch (error) {
       console.error("Error loading models:", error);
@@ -666,14 +672,15 @@ class GameDemo {
         }
 
         // Check if the object's z position is greater than 0 and make it invisible
-        //camera is on z = 70, player x = 0
-        if (object.position.z > 50 && !object.userData.crossedThreshold) {
+        // camera is on z = 25, player z = 0
+        if (object.position.z > 10 && !object.userData.crossedThreshold) {  //50
           object.visible = false;
           object.userData.crossedThreshold = true;
         } else if (object.position.z <= 0) {
           object.visible = true;
           object.userData.crossedThreshold = false;
         }
+      
       }
     });
   }
@@ -717,10 +724,10 @@ class GameDemo {
     });
   }
 
-  //character movement
+  //character movement   //18
   moveUp() {
-    const step = 18;
-    const maxY = 18;
+    const step = 6;
+    const maxY = 6;
     let newY = this.player.position.y + step;
     if (newY > maxY) {
       newY = maxY;
@@ -728,8 +735,8 @@ class GameDemo {
     this.player.position.y = newY;
   }
   moveDown() {
-    const step = 18;
-    const minY = -18;
+    const step = 6;
+    const minY = -6;
     let newY = this.player.position.y - step;
     if (newY < minY) {
       newY = minY;
@@ -737,8 +744,8 @@ class GameDemo {
     this.player.position.y = newY;
   }
   moveLeft() {
-    const step = 18;
-    const minX = -18;
+    const step = 6;
+    const minX = -6;
     let newX = this.player.position.x - step;
     if (newX < minX) {
       newX = minX;
@@ -746,8 +753,8 @@ class GameDemo {
     this.player.position.x = newX;
   }
   moveRight() {
-    const step = 18;
-    const maxX = 18;
+    const step = 6;
+    const maxX = 6;
     let newX = this.player.position.x + step;
     if (newX > maxX) {
       newX = maxX;
