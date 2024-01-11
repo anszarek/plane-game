@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-var coinCounterElement = document.getElementById('coinCounter');
-var speedCounterElement = document.getElementById('Speed');
+let game = false;
+
+let coinCounterElement = document.getElementById('coinCounter');
+let speedCounterElement = document.getElementById('Speed');
 
 let PlaneObstacle, Fuel, CloudObstacle, CloudLightningObstacle, Coin;
 const dim = 6;
@@ -745,8 +747,10 @@ class GameDemo {
             updateSpeedCounter();
 
           }else {
+            game = false;
             this._gameOver = true;
-            console.log('Game Over!');
+            document.querySelector('.controls').style.visibility = "visible"
+            return
           }
           
         }
@@ -967,6 +971,16 @@ class GameDemo {
 
 let _APP = null;
 
+
+
+
+
 window.addEventListener("DOMContentLoaded", () => {
-  _APP = new GameDemo();
+  document.querySelector('#start').addEventListener('click', () => {
+    game = true;
+    document.querySelector('.controls').style.visibility = "hidden"
+    _APP = new GameDemo();
+  })
+
+  
 });

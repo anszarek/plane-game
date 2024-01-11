@@ -1,11 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&family=Roboto+Flex:opsz@8..144&display=swap');
+
 *{
   transition: all 1s ease-in-out;
+  font-family: 'Roboto', sans-serif;
 }
 
 body{
   margin: 0;
   padding: 0;
   background-image: radial-gradient( #c2e9fb, #a1c4fd );
+}
+h1 {
+  font-family: 'Love Ya Like A Sister', cursive;;
 }
 
 #coinCounter{
