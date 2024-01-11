@@ -7,3 +7,20 @@ body{
   padding: 0;
   background-image: radial-gradient( #c2e9fb, #a1c4fd );
 }
+
+#coinCounter{
+  position:absolute;
+  right: 0;
+  padding: 50px 70px;
+  font-size: 50px;
+  font-weight: bold;
+  color: rgb(59, 78, 94);
+}
+#Speed{
+  position:absolute;
+  right: 0;
+  padding: 110px 70px;
+  font-size: 50px;
+  font-weight: bold;
+  color: rgb(59, 78, 94);
+}

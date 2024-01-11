@@ -1,10 +1,17 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-let PlaneObstacle, DogObstacle, CloudObstacle, CloudLightningObstacle, Coin;
+var coinCounterElement = document.getElementById('coinCounter');
+var speedCounterElement = document.getElementById('Speed');
+
+let PlaneObstacle, Fuel, CloudObstacle, CloudLightningObstacle, Coin;
 const dim = 6;
 let lastChunk = ["first"];
 let allObjects = [];
+let globalSpeed = 0.1;
+let globalSpeedCounter = 1;
+let collectedCoins = 0;
+let fuelCollisionTime = null;
 
 const generateObjectPos = (dim, usedPositions) => {
   const arr = [-dim, 0, dim];
@@ -25,6 +32,13 @@ const generateObjectPos = (dim, usedPositions) => {
   const gridIdx = Math.floor(Math.random() * avaliable.length);
   return avaliable[gridIdx];
 };
+
+function updateCoinCounter() {
+  coinCounterElement.textContent = `Coins: ${collectedCoins}`;
+}
+function updateSpeedCounter() {
+  speedCounterElement.textContent = `Speed: x${globalSpeedCounter}`;
+}
 
 let modelsLoading = true;
 class BasicCharacterControllerInput {
@@ -105,7 +119,7 @@ class GameDemo {
   constructor() {
     this._Initialize();
     this._input = new BasicCharacterControllerInput(this);
-    this._collectedCoins = 0;
+    // this._collectedCoins = 0;
     this._gameOver = false;
   }
 
@@ -181,7 +195,6 @@ class GameDemo {
       slice.forEach((object) => {
         const { model, position } = object;
         this._addModel(
-          //CloudObstacle.clone(),
           model,
           position[0],
           position[1],
@@ -224,6 +237,7 @@ class GameDemo {
         { model: CloudObstacle.clone(), position: [-dim, -dim] },
         { model: CloudObstacle.clone(), position: [dim, 0] },
         { model: Coin.clone(), position: [0, 0] },
+        { model: Fuel.clone(), position: [0, dim] },
       ],
       [
         { model: CloudObstacle.clone(), position: [dim, dim] },
@@ -260,6 +274,7 @@ class GameDemo {
         { model: CloudObstacle.clone(), position: [-dim, -dim] },
         { model: CloudLightningObstacle.clone(), position: [dim, dim] },
         { model: Coin.clone(), position: [-dim, dim] },
+        { model: Fuel.clone(), position: [0, 0] },
       ],
       [
         { model: CloudObstacle.clone(), position: [-dim, 0] },
@@ -319,6 +334,7 @@ class GameDemo {
         { model: CloudObstacle.clone(), position: [dim, dim] },
         { model: CloudLightningObstacle.clone(), position: [-dim, dim] },
         { model: Coin.clone(), position: [dim, 0] },
+        { model: Fuel.clone(), position: [dim, -dim] },
       ],
       [
         { model: CloudObstacle.clone(), position: [-dim, dim] },
@@ -605,9 +621,9 @@ class GameDemo {
         new Promise((resolve) =>
           loader.load("./resources/models/plane.glb", resolve)
         );
-      const loadDogObstacle = () =>
+      const loadFuel = () =>
         new Promise((resolve) =>
-          loader.load("./resources/models/dog-in-plane.glb", resolve)
+          loader.load("./resources/models/fuel.glb", resolve)
         );
       const loadCloudLightningObstacle = () =>
         new Promise((resolve) =>
@@ -621,13 +637,13 @@ class GameDemo {
       const [
         cloudResult,
         planeResult,
-        dogResult,
+        fuelResult,
         cloudLightningResult,
         coinResult,
       ] = await Promise.all([
         loadCloudObstacle(),
         loadPlaneObstacle(),
-        loadDogObstacle(),
+        loadFuel(),
         loadCloudLightningObstacle(),
         loadCoin(),
         loadPlayer(),
@@ -642,7 +658,8 @@ class GameDemo {
       });
       PlaneObstacle = planeResult.scene;
       PlaneObstacle.name = "PlaneObstacle";
-      DogObstacle = dogResult.scene;
+      Fuel = fuelResult.scene;
+      Fuel.name = "Fuel";
       CloudLightningObstacle = cloudLightningResult.scene;
       CloudLightningObstacle.traverse((child) => {
         if (child.isMesh) {
@@ -678,21 +695,20 @@ class GameDemo {
 
   _RAFAirObjects() {
     if (this._gameOver) {
-      return; // Stop updating objects if the game is over
+      return; 
     }
     let airObjects = [
       PlaneObstacle,
-      DogObstacle,
+      Fuel,
       CloudObstacle,
       CloudLightningObstacle,
       Coin,
     ]; // Add other objects if needed
-    const speed = 0.1; // Adjust the speed of movement towards the user
     airObjects = [...allObjects];
     airObjects.forEach((object, index) => {
       
         if (object) {
-          object.position.z += speed;
+          object.position.z += globalSpeed;
   
           // Add movement logic for clones here
           if (object.userData && object.userData.isClone) {
@@ -735,20 +751,41 @@ class GameDemo {
       for (let i = 0; i < allObjects.length; i++) {
         const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
 
+        // const playerWireframe = new THREE.BoxHelper(this.player, 0xffff00);
+        // const objectWireframe = new THREE.BoxHelper(allObjects[i], 0xff0000);
+      
+
         if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
           // Collision detected between player and current object
+          // this._scene.add(playerWireframe);
+          // this._scene.add(objectWireframe);
+
           if (allObjects[i].name === 'Coin') {
             allObjects[i].position.z = 50;
             allObjects[i].visible = false;
             allObjects[i].userData.crossedThreshold = true;
             airObjects.splice(index, 1);
 
-            this._collectedCoins++;
+            // this._collectedCoins++;
+            collectedCoins += 50;
+            updateCoinCounter();
             console.log(`Collected Coins: ${this._collectedCoins}`);
+
+          }else if (allObjects[i].name === 'Fuel') {
+            allObjects[i].position.z = 50;
+            allObjects[i].visible = false;
+            allObjects[i].userData.crossedThreshold = true;
+            airObjects.splice(index, 1);
+            
+            fuelCollisionTime = Date.now();
+
+            globalSpeed += 0.1;
+            globalSpeedCounter++;
+            updateSpeedCounter();
+
           }else {
-            // Collision with non-coin object, game over
             this._gameOver = true;
-            console.log('Game Over!'); // You can replace this with your game over logic
+            console.log('Game Over!');
           }
           
         }
@@ -799,6 +836,28 @@ class GameDemo {
       this._threejs.render(this._scene, this._camera);
       this._RAF();
     });
+
+    
+    //spowolnienie po 5s od zebrania Fuel
+    const speedCounterInterval = setInterval(() => {
+      if (fuelCollisionTime) {
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - fuelCollisionTime) / 1000;
+
+        if (globalSpeedCounter > 1 && elapsedTime >= 5) {
+          globalSpeedCounter--;
+          globalSpeed -= 0.1;
+          updateSpeedCounter();
+          if (globalSpeedCounter === 1){
+            fuelCollisionTime = null;
+            clearInterval(speedCounterInterval);
+          }else{
+            fuelCollisionTime = Date.now();
+          }
+          
+        }
+      }
+    }, 1000);
   }
 
   //character movement   //18
