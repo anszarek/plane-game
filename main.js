@@ -13,25 +13,9 @@ let globalSpeedCounter = 1;
 let collectedCoins = 0;
 let fuelCollisionTime = null;
 
-const generateObjectPos = (dim, usedPositions) => {
-  const arr = [-dim, 0, dim];
-  let grid = [];
-  for (let i in arr) {
-    for (let j in arr) {
-      grid.push([arr[i], arr[j]]);
-    }
-  }
-  let avaliable;
-  if (usedPositions) {
-    avaliable = grid.filter(
-      (n) => !usedPositions.some(([x, y]) => x === n[0] && y === n[1])
-    );
-  } else {
-    avaliable = grid;
-  }
-  const gridIdx = Math.floor(Math.random() * avaliable.length);
-  return avaliable[gridIdx];
-};
+function lerp(start, end, t) {
+  return start * (1 - t) + end * t;
+}
 
 function updateCoinCounter() {
   coinCounterElement.textContent = `Coins: ${collectedCoins}`;
@@ -119,7 +103,6 @@ class GameDemo {
   constructor() {
     this._Initialize();
     this._input = new BasicCharacterControllerInput(this);
-    // this._collectedCoins = 0;
     this._gameOver = false;
   }
 
@@ -149,9 +132,9 @@ class GameDemo {
     const near = 1.0;
     const far = 1000.0;
     this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(0, 0, 25);
+    this._camera.position.set(0, 5, 25);
 
-    this._camera.rotation.x += -0.15;
+    this._camera.rotation.x += -0.30;
 
     //scene
     this._scene = new THREE.Scene();
@@ -709,19 +692,6 @@ class GameDemo {
       
         if (object) {
           object.position.z += globalSpeed;
-  
-          // Add movement logic for clones here
-          if (object.userData && object.userData.isClone) {
-            const cloneSpeed = 0.05; // Adjust the speed of clone movement
-            object.position.x += cloneSpeed;
-  
-            // Reset clone position when it reaches a certain point
-            if (object.position.x > dim) {
-              object.position.x = -dim;
-              object.position.y = generateObjectPos(dim)[1];
-            }
-          }
-          
         }
 
       
@@ -751,14 +721,7 @@ class GameDemo {
       for (let i = 0; i < allObjects.length; i++) {
         const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
 
-        // const playerWireframe = new THREE.BoxHelper(this.player, 0xffff00);
-        // const objectWireframe = new THREE.BoxHelper(allObjects[i], 0xff0000);
-      
-
         if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-          // Collision detected between player and current object
-          // this._scene.add(playerWireframe);
-          // this._scene.add(objectWireframe);
 
           if (allObjects[i].name === 'Coin') {
             allObjects[i].position.z = 50;
@@ -766,10 +729,8 @@ class GameDemo {
             allObjects[i].userData.crossedThreshold = true;
             airObjects.splice(index, 1);
 
-            // this._collectedCoins++;
             collectedCoins += 50;
             updateCoinCounter();
-            console.log(`Collected Coins: ${this._collectedCoins}`);
 
           }else if (allObjects[i].name === 'Fuel') {
             allObjects[i].position.z = 50;
@@ -860,48 +821,149 @@ class GameDemo {
     }, 1000);
   }
 
-  //character movement   //18
+
+  //character movement
+  
   moveUp() {
+    if (this.animationInProgress  || this._gameOver === true) {
+      return;
+    }
     const step = 6;
     const maxY = 6;
-    let newY = this.player.position.y + step;
-    if (newY > maxY) {
-      newY = maxY;
-    }
-    this.player.position.y = newY;
-    this._camera.position.y = newY;
+    const duration = 500;
+    const camMaxY = 11;
+
+    const startValue = this.player.position.y;
+    const targetValue = Math.min(startValue + step, maxY);
+
+    const camStartValue = this._camera.position.y;
+    const camTargetValue = Math.min(camStartValue + step, camMaxY);    
+
+    const startTime = Date.now();
+    this.animationInProgress = true;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const newY = lerp(startValue, targetValue, progress);
+      const camNewY = lerp(camStartValue, camTargetValue, progress);
+
+      this.player.position.y = newY;
+      this._camera.position.y = camNewY;
+
+      if (progress < 1) {
+          requestAnimationFrame(animate);
+      }else {
+        this.animationInProgress = false;
+      }
+    };
+    animate();
   }
   moveDown() {
-    const step = 6;
-    const minY = -6;
-    let newY = this.player.position.y - step;
-    if (newY < minY) {
-      newY = minY;
+    if (this.animationInProgress  || this._gameOver === true) {
+      return;
     }
-    this.player.position.y = newY;
-    this._camera.position.y = newY;
+    const step = -6;
+    const minY = -6;
+    const duration = 500;
+    const camMinY = -1;
+
+    const startValue = this.player.position.y;
+    const targetValue = Math.max(startValue + step, minY);
+
+    const camStartValue = this._camera.position.y;
+    const camTargetValue = Math.max(camStartValue + step, camMinY);
+
+    const startTime = Date.now();
+    this.animationInProgress = true;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const newY = lerp(startValue, targetValue, progress);
+      const camNewY = lerp(camStartValue, camTargetValue, progress);
+
+      this.player.position.y = newY;
+      this._camera.position.y = camNewY;
+
+      if (progress < 1) {
+          requestAnimationFrame(animate);
+      } else {
+        this.animationInProgress = false;
+      }
+    };
+    animate();
+
+
   }
   moveLeft() {
-    const step = 6;
-    const minX = -6;
-    let newX = this.player.position.x - step;
-    if (newX < minX) {
-      newX = minX;
+    if (this.animationInProgress  || this._gameOver === true) {
+      return;
     }
-    this.player.position.x = newX;
-    this._camera.position.x = newX;
+    const step = -6;
+    const minX = -6;
+    const duration = 500;
+
+    const startValue = this.player.position.x;
+    const targetValue = Math.max(startValue + step, minX);
+    const startTime = Date.now();
+    this.animationInProgress = true;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const newX = lerp(startValue, targetValue, progress);
+
+      this.player.position.x = newX;
+      this._camera.position.x = newX;
+
+      if (progress < 1) {
+          requestAnimationFrame(animate);
+      } else {
+        this.animationInProgress = false;
+      }
+    };
+    animate();
   }
   moveRight() {
+    if (this.animationInProgress || this._gameOver === true) {
+      return;
+    }
     const step = 6;
     const maxX = 6;
-    let newX = this.player.position.x + step;
-    if (newX > maxX) {
-      newX = maxX;
-    }
-    this.player.position.x = newX;
-    this._camera.position.x = newX;
+    const duration = 500;
+
+    const startValue = this.player.position.x;
+    const targetValue = Math.min(startValue + step, maxX);
+    const startTime = Date.now();
+    this.animationInProgress = true;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const newX = lerp(startValue, targetValue, progress);
+
+      this.player.position.x = newX;
+      this._camera.position.x = newX;
+
+      if (progress < 1) {
+          requestAnimationFrame(animate);
+      } else {
+        this.animationInProgress = false;
+      }
+    };
+    animate();
   }
 }
+
 
 let _APP = null;
 
