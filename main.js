@@ -138,7 +138,6 @@ class GameDemo {
 
     this._camera.rotation.x += -0.30;
 
-    //scene
     this._scene = new THREE.Scene();
 
     //lights
@@ -162,7 +161,6 @@ class GameDemo {
     light = new THREE.AmbientLight(0x101010);
     this._scene.add(light);
 
-
     this._RAF();
   }
 
@@ -185,7 +183,6 @@ class GameDemo {
           position[1],
           -i * 18 - 18 + lastZ
         );
-
       });
     });
   };
@@ -350,7 +347,6 @@ class GameDemo {
         { model: Coin.clone(), position: [dim, -dim] },
       ],
     ];
-
 
     const LastElement = allObjects.length - 1;
 
@@ -588,7 +584,6 @@ class GameDemo {
               gltf.scene.traverse((c) => {
                 c.castShadow = true;
               });
-
               this.player = gltf.scene.children[0];
               this.player.position.set(0, 0, 0);
               this._scene.add(gltf.scene);
@@ -668,7 +663,6 @@ class GameDemo {
         this._scene.add(model); // Use this._scene instead of scene
         allObjects.push(model);
       }
-      
     }
   }
 
@@ -690,13 +684,10 @@ class GameDemo {
       Coin,
     ]; // Add other objects if needed
     airObjects = [...allObjects];
-    airObjects.forEach((object, index) => {
-      
+    airObjects.forEach((object) => {
         if (object) {
           object.position.z += globalSpeed;
         }
-
-      
     });
     let indexes = [];
 
@@ -718,13 +709,11 @@ class GameDemo {
         object.userData.crossedThreshold = false;
       }
 
-      // Check collision between player and other objects
       const playerBoundingBox = new THREE.Box3().setFromObject(this.player);
       for (let i = 0; i < allObjects.length; i++) {
         const objectBoundingBox = new THREE.Box3().setFromObject(allObjects[i]);
 
         if (playerBoundingBox.intersectsBox(objectBoundingBox)) {
-
           if (allObjects[i].name === 'Coin') {
             allObjects[i].position.z = 50;
             allObjects[i].visible = false;
@@ -739,20 +728,15 @@ class GameDemo {
             allObjects[i].visible = false;
             allObjects[i].userData.crossedThreshold = true;
             airObjects.splice(index, 1);
-            
             fuelCollisionTime = Date.now();
-
             globalSpeed += 0.1;
             globalSpeedCounter++;
             updateSpeedCounter();
-
           }else {
             game = false;
             this._gameOver = true;
-            document.querySelector('.controls').style.visibility = "visible"
-            return
+            location.reload();            
           }
-          
         }
       }
     })
@@ -802,7 +786,6 @@ class GameDemo {
       this._RAF();
     });
 
-    
     //spowolnienie po 5s od zebrania Fuel
     const speedCounterInterval = setInterval(() => {
       if (fuelCollisionTime) {
@@ -819,15 +802,11 @@ class GameDemo {
           }else{
             fuelCollisionTime = Date.now();
           }
-          
         }
       }
     }, 1000);
   }
-
-
-  //character movement
-  
+ 
   moveUp() {
     if (this.animationInProgress  || this._gameOver === true) {
       return;
@@ -901,8 +880,6 @@ class GameDemo {
       }
     };
     animate();
-
-
   }
   moveLeft() {
     if (this.animationInProgress  || this._gameOver === true) {
@@ -968,12 +945,7 @@ class GameDemo {
   }
 }
 
-
 let _APP = null;
-
-
-
-
 
 window.addEventListener("DOMContentLoaded", () => {
   document.querySelector('#start').addEventListener('click', () => {
@@ -981,6 +953,4 @@ window.addEventListener("DOMContentLoaded", () => {
     document.querySelector('.controls').style.visibility = "hidden"
     _APP = new GameDemo();
   })
-
-  
 });
