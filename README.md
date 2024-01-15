@@ -1,16 +1,16 @@
-#Sky Surfers
-##Description
+# Sky Surfers
+## Description
 Subway surfers inspired endless runner game.
 
-##Installation
+## Installation
 To install the necessary packages for this project, run the following command:
 `yarn install`
 
-###Running the Server
+### Running the Server
 To start the server, execute the following command:
 `yarn dev`
 
-###Game Controls
+### Game Controls
 Use the following keys to control the game:
 
 W: [move up]
