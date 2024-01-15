@@ -2,13 +2,15 @@
 ## Description
 Subway surfers inspired endless runner game.
 
+A binary version is not provided. Please run the game locally.
+
 ## Installation
 To install the necessary packages for this project, run the following command:
-`yarn install`
+`npm i`
 
 ### Running the Server
 To start the server, execute the following command:
-`yarn dev`
+`npm run dev`
 
 ### Game Controls
 Use the following keys to control the game:
