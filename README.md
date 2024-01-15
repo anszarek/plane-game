@@ -2,6 +2,8 @@
 ## Description
 Subway surfers inspired endless runner game.
 
+A binary version is not provided. Please run the game locally.
+
 ## Installation
 To install the necessary packages for this project, run the following command:
 `npm i`
